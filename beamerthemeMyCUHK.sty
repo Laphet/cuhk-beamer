@@ -1,0 +1,180 @@
+% Requirements
+% Use tikz for drawing
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+
+% Beautiful boxes
+\usepackage[most]{tcolorbox}
+% For some if-else
+\usepackage{etoolbox}
+
+% For Source fonts
+% Personally, I prefer to use those fonts.
+\usepackage[default]{sourcesanspro}
+
+
+% disable navigation
+\setbeamertemplate{navigation symbols}{}
+
+% Get collaborators
+\newcommand{\collaborators}[1]{\newcommand{\insertcollaborators}{#1}}
+
+% Get the occasion
+\newcommand{\occasion}[1]{\newcommand{\insertoccasion}{#1}}
+
+% CUHK colors
+\definecolor{CUHKpurple}{RGB}{117, 15, 109}
+\definecolor{CUHKbrown}{RGB}{221, 163, 0}
+\definecolor{CUHKyellow}{RGB}{244, 223, 176}
+\definecolor{CUHKblack}{RGB}{34, 24, 21}
+\definecolor{Pantone877C}{RGB}{138, 141, 143}
+
+% Bring them into beamer colors
+\setbeamercolor{normal text}{fg=CUHKblack, bg=white}
+\setbeamercolor{titlelike}{fg=CUHKyellow, bg=CUHKpurple}
+\setbeamercolor{alerted text}{fg=CUHKbrown}
+\setbeamercolor{itemize item}{fg=CUHKpurple}
+\setbeamercolor{enumerate item}{fg=CUHKpurple}
+\setbeamercolor{block title}{fg=CUHKyellow, bg=CUHKpurple}
+\setbeamercolor{page number in head/foot}{fg=CUHKpurple}
+\setbeamercolor{caption name}{fg=CUHKpurple}
+\setbeamercolor{bibliography entry author}{fg=CUHKbrown}
+\setbeamercolor{bibliography entry title}{fg=CUHKblack}
+\setbeamercolor{bibliography entry location}{fg=CUHKblack}
+\setbeamercolor{bibliography entry note}{fg=CUHKblack}
+
+% A seperation line
+\newcommand{\MyCUHKline}{
+  \begin{center}
+    \noindent\textcolor{CUHKpurple}{\rule{0.8\textwidth}{1pt}}
+  \end{center}
+  \par%
+}
+
+% Set citation style
+\newcommand{\citep}[1]{({\rmfamily \cite{#1}})}
+
+
+% Set fonts
+\setbeamerfont{title}{series=\bfseries, shape=\scshape, size=\LARGE}
+\setbeamerfont{frametitle}{series=\bfseries, size=\large}
+\setbeamerfont{sectiontitle}{series=\bfseries, size=\LARGE}
+
+% Set CUHK block
+\newtcolorbox{MyCUHKblock}[1]{
+  colframe=CUHKpurple,
+  fonttitle=\bfseries,
+  title={\textcolor{CUHKyellow}{#1}}
+}
+
+\newtcolorbox{MyCUHKfigure}{
+  colframe=CUHKyellow,
+  boxrule=4pt,
+  boxsep=0pt,
+  left=0pt,
+  right=0pt,
+  top=0pt,
+  bottom=0pt,
+  hbox
+}
+
+% Dimentions
+\newdimen\slidewidth
+\newdimen\slideheight
+\slidewidth=\the\paperwidth
+\slideheight=\the\paperheight
+
+% Background
+\defbeamertemplate*{background}{MyCUHK}[1][]
+{
+  \begin{tikzpicture}
+    \useasboundingbox (0, 0) rectangle(\slidewidth, \slideheight);
+    \fill[Pantone877C!50!white, opacity=0.2] (0, 0) rectangle(\slidewidth, \slideheight);
+  \end{tikzpicture}
+}
+
+% Title page
+\defbeamertemplate*{title page}{MyCUHK}[1][]
+{
+  \inserttitlegraphic
+
+  \vspace{0.5cm}%
+  \begin{beamercolorbox}[center, sep=8pt, rounded=true, #1]{titlelike}
+    \usebeamerfont{title}
+    \inserttitle%
+  \end{beamercolorbox}%
+
+  \vspace{0.5cm}%
+  \begin{beamercolorbox}[center, #1]{author}
+    \usebeamerfont{author}\insertauthor%
+  \end{beamercolorbox}
+
+  \vspace{0.5cm}%
+  \begin{beamercolorbox}[center, #1]{institute}
+    \usebeamerfont{author}\insertinstitute%
+  \end{beamercolorbox}
+
+  \ifdefempty{\insertcollaborators}{}{
+    \vspace{0.5cm}%
+    \begin{beamercolorbox}[center, #1]{author}
+      \usebeamerfont{author}
+      {
+        \small{
+          \textcolor{CUHKpurple}{in collaboration with} \insertcollaborators%
+        }
+      }
+    \end{beamercolorbox}
+  }
+
+  \vspace{0.5cm}%
+  \begin{beamercolorbox}[center, #1]{date}
+    \usebeamerfont{author}
+    {
+      \ifdefempty{\insertoccasion}{\insertdate}{\insertoccasion, \insertdate}%
+    }
+  \end{beamercolorbox}
+  \vfill
+}
+
+
+% Add page number, no total page number
+% \setbeamertemplate{footline}[page number]
+\setbeamertemplate{footline}{% 
+  \hfill% 
+  \usebeamercolor[fg]{page number in head/foot}% 
+  \usebeamerfont{page number in head/foot}% 
+  \insertframenumber%
+  %\,/\,\inserttotalframenumber
+  \kern1em\vskip2pt% 
+}
+
+% add section titles
+\AtBeginSection{
+  \begin{frame}[plain]
+    \sectionpage
+  \end{frame}
+}
+\defbeamertemplate*{section page}{MyCUHK}[1][]
+{
+  \begin{tikzpicture}[overlay, remember picture]
+    \node[anchor=center] at (current page.center) {
+      \begin{beamercolorbox}[center, sep=8pt, rounded=true, #1]{titlelike}
+        \usebeamerfont{sectiontitle}
+        {\rmfamily \MakeUppercase{\romannumeral \insertsectionnumber}}\qquad\insertsection%
+      \end{beamercolorbox}
+    };
+  \end{tikzpicture}
+}
+
+% A thanks page
+\newcommand{\thankspage}[1]{
+  \begin{frame}[plain]
+    \begin{tikzpicture}[overlay, remember picture, shift={(current page.south west)}]
+      \useasboundingbox (0, 0) rectangle(\slidewidth, \slideheight);
+      \fill[CUHKpurple] (0, 0) rectangle(\slidewidth, \slideheight);
+      \node[anchor=center] at (0.5\slidewidth, 0.5\slideheight) {\textcolor{CUHKyellow}{\Huge{\rmfamily #1}}};
+    \end{tikzpicture}
+  \end{frame}
+}
+
+
